@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Whisker",
+  "version": "1.0",
+  "description": "Scrape websites to collect recipes and save them.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"]
+    }
+  ]
+}

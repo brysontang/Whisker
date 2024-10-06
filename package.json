@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "name": "whisker",
+  "version": "1.0.0",
+  "description": "Find recipes then store them in your own personal cookbook with your own personal twist.",
+  "main": "index.js",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brysontang/Whisk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brysontang/Whisk/issues"
+  },
+  "homepage": "https://github.com/brysontang/Whisk#readme"
+}
