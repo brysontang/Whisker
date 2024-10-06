@@ -1,5 +1,6 @@
 import { recipes } from '../../data/recipes'; // Replace with DB access in production
 import { NextResponse } from 'next/server';
+import { calculateInputCost } from '../../utils/calculate-cost';
 
 export async function POST(request) {
   // Parse new recipe from request
@@ -10,6 +11,9 @@ export async function POST(request) {
   console.log('recipeText', recipeText);
   // For now, just add it to an array
   recipes.push({ title, url, recipeText });
+
+  const cost = calculateInputCost(recipeText);
+  console.log('cost', cost);
 
   const response = NextResponse.json(
     { message: 'Recipe saved successfully', title, url },
