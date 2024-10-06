@@ -3,18 +3,45 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   // Parse new recipe from request
-  const newRecipe = await request.json();
-  console.log('newRecipe', newRecipe);
+  const body = await request.json();
+  const { title, url, recipeText } = body;
+  console.log('title', title);
+  console.log('url', url);
+  console.log('recipeText', recipeText);
   // For now, just add it to an array
-  recipes.push(newRecipe);
+  recipes.push({ title, url, recipeText });
 
-  return NextResponse.json(
-    { message: 'Recipe saved successfully', newRecipe },
-    { status: 201 }
+  const response = NextResponse.json(
+    { message: 'Recipe saved successfully', title, url },
+    { status: 200 }
   );
+
+  // Set CORS headers
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  return response;
 }
 
-export async function GET() {
-  // Return all saved recipes
-  return NextResponse.json(recipes);
+export async function GET(request) {
+  const response = NextResponse.json(recipes);
+
+  // Set CORS headers
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  return response;
+}
+
+export async function OPTIONS(request) {
+  const response = new NextResponse(null, { status: 204 });
+
+  // Set CORS headers
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  return response;
 }

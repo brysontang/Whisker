@@ -7,14 +7,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const recipeTitle =
       document.querySelector('h1')?.innerText || 'Untitled Recipe';
     const recipeUrl = window.location.href;
-
+    const recipeText = document.body.innerText;
+    console.log('recipeText', recipeText);
     // Send the recipe data to the backend API
     fetch('http://localhost:3000/api/recipes', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ title: recipeTitle, url: recipeUrl }),
+      body: JSON.stringify({
+        title: recipeTitle,
+        url: recipeUrl,
+        recipeText: recipeText,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
