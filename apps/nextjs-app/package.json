@@ -12,8 +12,10 @@
     "cors": "^2.8.5",
     "gpt-tokenizer": "^2.4.0",
     "next": "14.2.14",
+    "openai": "^4.67.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "eslint": "^8",

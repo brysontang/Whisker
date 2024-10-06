@@ -5,3 +5,9 @@ export function calculateInputCost(text) {
   const cost = (tokens.length / 1000000) * 0.15;
   return cost;
 }
+
+export function calculateOutputCost(text) {
+  const tokens = encode(text);
+  const cost = (tokens.length / 1000000) * 0.6;
+  return cost;
+}

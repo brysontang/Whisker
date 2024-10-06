@@ -1,6 +1,6 @@
 import { recipes } from '../../data/recipes'; // Replace with DB access in production
 import { NextResponse } from 'next/server';
-import { calculateInputCost } from '../../utils/calculate-cost';
+import { extractInformation } from '../../utils/extract-information';
 
 export async function POST(request) {
   // Parse new recipe from request
@@ -8,12 +8,12 @@ export async function POST(request) {
   const { title, url, recipeText } = body;
   console.log('title', title);
   console.log('url', url);
-  console.log('recipeText', recipeText);
+
+  const { result, cost } = await extractInformation(recipeText);
+  console.log('cost', cost);
+  console.log('result', result);
   // For now, just add it to an array
   recipes.push({ title, url, recipeText });
-
-  const cost = calculateInputCost(recipeText);
-  console.log('cost', cost);
 
   const response = NextResponse.json(
     { message: 'Recipe saved successfully', title, url },
