@@ -13,6 +13,7 @@ const Ingredient = z.object({
 
 const RecipeInfo = z.object({
   author: z.string(),
+  title: z.string(),
   ingredients: z.array(Ingredient),
   steps: z.array(z.string()),
   emoji: z.string(),
@@ -22,7 +23,7 @@ export async function extractInformation(recipe, instructions) {
   let systemPrompt = `You are a helpful assistant that extracts information from recipes.`;
 
   if (instructions) {
-    systemPrompt += ` The user has provided the following instructions: ${instructions}.`;
+    systemPrompt += ` The user has provided the following instructions, please take this into account with the recipe extraction, title, and emoji: ${instructions}.`;
   }
 
   const inputCost =

@@ -5,13 +5,13 @@ import { endpointWrapper } from '@/utils/endpoint-wrapper';
 export const POST = endpointWrapper(async (request, db) => {
   // Parse new recipe from request
   const body = await request.json();
-  const { title, url, recipeText, instructions } = body;
-  console.log('instructions', instructions);
+  const { url, recipeText, instructions } = body;
+
   const { result, cost } = await extractInformation(recipeText, instructions);
 
   // Save the recipe to the database
   const collection = db.collection('recipes');
-  await collection.insertOne({ title, url, ...result, cost });
+  await collection.insertOne({ url, ...result, cost });
 
   return { message: 'Recipe saved successfully', title, url };
 });
