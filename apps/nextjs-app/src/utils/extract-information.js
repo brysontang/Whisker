@@ -18,8 +18,13 @@ const RecipeInfo = z.object({
   emoji: z.string(),
 });
 
-export async function extractInformation(recipe) {
-  const systemPrompt = `You are a helpful assistant that extracts information from recipes.`;
+export async function extractInformation(recipe, instructions) {
+  let systemPrompt = `You are a helpful assistant that extracts information from recipes.`;
+
+  if (instructions) {
+    systemPrompt += ` The user has provided the following instructions: ${instructions}.`;
+  }
+
   const inputCost =
     calculateInputCost(recipe) + calculateOutputCost(systemPrompt);
   console.log('input cost', inputCost);
