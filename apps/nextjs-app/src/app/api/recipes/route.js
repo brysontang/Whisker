@@ -1,51 +1,44 @@
-import { recipes } from '../../data/recipes'; // Replace with DB access in production
 import { NextResponse } from 'next/server';
-import { extractInformation } from '../../utils/extract-information';
+import { extractInformation } from '@/utils/extract-information';
+import { endpointWrapper } from '@/utils/endpoint-wrapper';
 
-export async function POST(request) {
+export const POST = endpointWrapper(async (request, db) => {
   // Parse new recipe from request
   const body = await request.json();
   const { title, url, recipeText } = body;
-  console.log('title', title);
-  console.log('url', url);
 
   const { result, cost } = await extractInformation(recipeText);
-  console.log('cost', cost);
-  console.log('result', result);
-  // For now, just add it to an array
-  recipes.push({ title, url, recipeText });
 
-  const response = NextResponse.json(
-    { message: 'Recipe saved successfully', title, url },
-    { status: 200 }
-  );
+  // Save the recipe to the database
+  const collection = db.collection('recipes');
+  await collection.insertOne({ title, url, ...result, cost });
 
-  // Set CORS headers
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  return { message: 'Recipe saved successfully', title, url };
+});
 
-  return response;
-}
+export const GET = endpointWrapper(async (request, db) => {
+  // Get query parameters
+  const { searchParams } = new URL(request.url);
+  const fields = searchParams.get('fields');
 
-export async function GET(request) {
-  const response = NextResponse.json(recipes);
+  // Prepare projection object
+  const projection = {};
+  if (fields) {
+    fields.split(',').forEach((field) => {
+      projection[field.trim()] = 1;
+    });
+  }
 
-  // Set CORS headers
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  // Fetch recipes from the database with projection
+  const collection = db.collection('recipes');
+  const recipes = await collection
+    .find({}, { projection })
+    .sort({ createdAt: -1 })
+    .toArray();
 
-  return response;
-}
+  return recipes;
+});
 
-export async function OPTIONS(request) {
-  const response = new NextResponse(null, { status: 204 });
-
-  // Set CORS headers
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-
-  return response;
-}
+export const OPTIONS = endpointWrapper(async () => {
+  return new NextResponse(null, { status: 204 });
+});

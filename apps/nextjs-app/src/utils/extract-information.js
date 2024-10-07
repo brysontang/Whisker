@@ -15,6 +15,7 @@ const RecipeInfo = z.object({
   author: z.string(),
   ingredients: z.array(Ingredient),
   steps: z.array(z.string()),
+  emoji: z.string(),
 });
 
 export async function extractInformation(recipe) {
