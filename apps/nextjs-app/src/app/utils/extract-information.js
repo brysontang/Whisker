@@ -34,9 +34,10 @@ export async function extractInformation(recipe) {
     });
 
     const result = completion.choices[0].message.parsed;
-    const outputCost = calculateOutputCost(result);
+    console.log('result', result);
+    const outputCost = calculateOutputCost(JSON.stringify(result));
 
-    console.log('output cost', outputCost);
+    // console.log('output cost', outputCost);
     return { result, cost: inputCost + outputCost };
   } catch (error) {
     console.error('Error extracting information from recipe:', error);
