@@ -1,8 +1,8 @@
 /* global chrome */
-import React from 'react';
+import React, { useState } from 'react';
 
 function App() {
-  const [status, setStatus] = React.useState('');
+  const [status, setStatus] = useState('');
 
   const handleScrape = () => {
     setStatus('Scraping...');
@@ -34,14 +34,38 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <a href="https://www.flaticon.com/free-icons/whisk" title="whisk icons">
-        Whisk icons created by Freepik - Flaticon
-      </a>
-      <h1>Whisker Popup</h1>
-      <p>Click to scrape recipes!</p>
-      <button onClick={handleScrape}>Scrape Now</button>
-      {status && <p>{status}</p>}
+    <div className="bg-amber-50 text-gray-800">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <div className="bg-parchment border-4 border-gray-300 rounded-lg shadow-lg p-8">
+          <h1 className="text-4xl font-serif font-bold mb-8 text-gray-900 border-b-2 border-gray-300 pb-4 text-center">
+            Whisker Popup
+          </h1>
+          <p className="text-lg text-gray-700 font-handwritten mb-6 text-center">
+            Click to scrape recipes!
+          </p>
+          <div className="flex justify-center">
+            <button
+              onClick={handleScrape}
+              className="px-6 py-3 bg-amber-200 text-gray-900 rounded-lg text-lg font-bold hover:bg-amber-600 transition duration-300 shadow-md active:shadow-inner active:translate-y-0.5 cursor-pointer flex items-center justify-center"
+            >
+              Scrape Now
+            </button>
+          </div>
+          {status && (
+            <p className="mt-6 text-center text-lg font-handwritten text-gray-800">
+              {status}
+            </p>
+          )}
+          <div className="mt-8 text-center text-sm text-gray-600">
+            <a
+              href="https://www.flaticon.com/free-icons/whisk"
+              title="whisk icons"
+            >
+              Whisk icons created by Freepik - Flaticon
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
