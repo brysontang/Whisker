@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function RecipePage({ params }) {
   const { recipeId } = params;
@@ -35,6 +36,12 @@ export default function RecipePage({ params }) {
   return (
     <div className="min-h-screen bg-amber-50 text-gray-900">
       <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <Link
+          href="/recipes"
+          className="inline-block mb-6 px-4 py-2 bg-sepia-200 text-gray-900 rounded-full text-lg font-medium hover:bg-sepia-300 transition duration-300"
+        >
+          ← Back to Recipes
+        </Link>
         <div className="bg-parchment border-4 border-sepia-300 rounded-lg shadow-lg p-8">
           <RecipeHeader
             title={recipe.title}
@@ -77,8 +84,8 @@ function IngredientsList({ ingredients }) {
             key={index}
             className="flex items-center text-lg font-handwritten"
           >
-            <span className="w-2 h-2 bg-sepia-400 rounded-full mr-3"></span>
-            <span className="font-medium text-gray-900">{ingredient.name}</span>
+            <span className="w-2 h-2 bg-sepia-400 rounded-full mr-3 inline-block"></span>
+            <span className="font-bold text-gray-900">{ingredient.name}</span>
             <span className="ml-2 text-gray-800">{ingredient.amount}</span>
           </li>
         ))}

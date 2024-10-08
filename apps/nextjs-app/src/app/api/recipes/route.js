@@ -13,7 +13,7 @@ export const POST = endpointWrapper(async (request, db) => {
   const collection = db.collection('recipes');
   await collection.insertOne({ url, ...result, cost });
 
-  return { message: 'Recipe saved successfully', title, url };
+  return { message: 'Recipe saved successfully', url };
 });
 
 export const GET = endpointWrapper(async (request, db) => {
