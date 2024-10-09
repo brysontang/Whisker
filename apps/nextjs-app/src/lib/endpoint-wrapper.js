@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import client from './db';
+import client from '@/lib/db/mongo';
 
 export function endpointWrapper(handler) {
   return async (request, ...args) => {

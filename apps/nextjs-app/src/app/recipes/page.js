@@ -1,4 +1,3 @@
-import { endpointWrapper } from '@/utils/endpoint-wrapper';
 import Link from 'next/link';
 
 async function getRecipes() {

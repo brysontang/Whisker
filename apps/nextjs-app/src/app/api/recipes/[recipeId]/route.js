@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ObjectId } from 'mongodb';
-import { endpointWrapper } from '@/utils/endpoint-wrapper';
+import { endpointWrapper } from '@/lib/endpoint-wrapper';
 
 export const GET = endpointWrapper(async (request, db, { params }) => {
   const { recipeId } = params;

@@ -19,6 +19,10 @@ This is a Next.js application that handles the extraction of text from the raw p
    OPENAI_API_KEY=your_openai_api_key
    MONGODB_URI=your_mongodb_uri
    MONGODB_DB=your_mongodb_database_name
+
+   AUTH_POSTMARK_KEY=your_postmark_key
+   EMAIL_SERVER=your_email_server
+   EMAIL_FROM=your_email_address
    ```
 
 3. Install dependencies:

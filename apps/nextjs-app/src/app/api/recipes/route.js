@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { extractInformation } from '@/utils/extract-information';
-import { endpointWrapper } from '@/utils/endpoint-wrapper';
+import { extractInformation } from '@/lib/openai/extract-information';
+import { endpointWrapper } from '@/lib/endpoint-wrapper';
 
 export const POST = endpointWrapper(async (request, db) => {
   // Parse new recipe from request
