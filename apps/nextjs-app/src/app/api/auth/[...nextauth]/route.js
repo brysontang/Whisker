@@ -4,7 +4,7 @@ import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import { ServerClient } from 'postmark';
 import { emailHtml, text } from '@/lib/email/sign-in';
 
-import client from '@/lib/db';
+import client from '@/lib/db/mongo';
 
 // Debug function
 const debug = (...args) => console.log('[NextAuth Debug]', ...args);
