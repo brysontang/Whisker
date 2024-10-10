@@ -2,6 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ExternalLink, DollarSign } from 'lucide-react';
+
+const pageVariants = {
+  initial: { opacity: 0, y: 20 },
+  in: { opacity: 1, y: 0 },
+  out: { opacity: 0, y: -20 },
+};
+
+const pageTransition = {
+  type: 'tween',
+  ease: 'anticipate',
+  duration: 0.5,
+};
 
 export default function RecipePage({ params }) {
   const { recipeId } = params;
@@ -34,63 +48,89 @@ export default function RecipePage({ params }) {
   if (error) return <ErrorMessage message={error} />;
 
   return (
-    <div className="min-h-screen bg-amber-50 text-gray-900">
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
+    <motion.div
+      initial="initial"
+      animate="in"
+      exit="out"
+      variants={pageVariants}
+      transition={pageTransition}
+      className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-100 text-gray-900"
+    >
+      <div className="container mx-auto px-4 py-12 max-w-6xl">
         <Link
           href="/recipes"
-          className="inline-block mb-6 px-4 py-2 bg-sepia-200 text-gray-900 rounded-full text-lg font-medium hover:bg-sepia-300 transition duration-300"
+          className="inline-flex items-center mb-6 px-4 py-2 bg-sepia-200 text-gray-900 rounded-full text-lg font-medium hover:bg-sepia-300 transition duration-300"
         >
-          ← Back to Recipes
+          <ChevronLeft className="mr-2" />
+          Back to Recipes
         </Link>
-        <div className="bg-parchment border-4 border-sepia-300 rounded-lg shadow-lg p-8">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="bg-parchment border-4 border-sepia-300 rounded-lg shadow-lg p-8"
+        >
           <RecipeHeader
             title={recipe.title}
             author={recipe.author}
             emoji={recipe.emoji}
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
             <IngredientsList ingredients={recipe.ingredients} />
             <InstructionsList steps={recipe.steps} />
           </div>
           <RecipeFooter url={recipe.url} cost={recipe.cost} />
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function RecipeHeader({ title, author, emoji }) {
   return (
-    <div className="text-center">
-      <h1 className="text-4xl font-serif font-bold mb-4 text-gray-900 border-b-2 border-sepia-300 pb-4">
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2 }}
+      className="text-center"
+    >
+      <h1 className="text-5xl font-serif font-bold mb-4 text-gray-900 border-b-2 border-sepia-300 pb-4">
         {emoji} {title}
       </h1>
-      <p className="text-xl text-gray-800 font-handwritten">
+      <p className="text-2xl text-gray-800 font-handwritten">
         From the kitchen of {author || 'Grandma'}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
 function IngredientsList({ ingredients }) {
   return (
-    <div className="bg-parchment-light rounded-lg p-6 border border-sepia-200">
-      <h2 className="text-2xl font-serif font-bold mb-4 text-gray-900 border-b border-sepia-300 pb-2">
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.4 }}
+      className="bg-parchment-light rounded-lg p-6 border border-sepia-200 shadow-md"
+    >
+      <h2 className="text-3xl font-serif font-bold mb-6 text-gray-900 border-b border-sepia-300 pb-2">
         Ingredients
       </h2>
-      <ul className="space-y-2">
+      <ul className="space-y-3">
         {ingredients.map((ingredient, index) => (
-          <li
+          <motion.li
             key={index}
-            className="flex items-center text-lg font-handwritten"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 * index }}
+            className="flex items-center text-xl font-handwritten"
           >
-            <span className="w-2 h-2 bg-sepia-400 rounded-full mr-3 inline-block"></span>
+            <span className="w-3 h-3 bg-sepia-400 rounded-full mr-4 inline-block"></span>
             <span className="font-bold text-gray-900">{ingredient.name}</span>
             <span className="ml-2 text-gray-800">{ingredient.amount}</span>
-          </li>
+          </motion.li>
         ))}
       </ul>
-    </div>
+    </motion.div>
   );
 }
 
@@ -118,12 +158,19 @@ function InstructionsList({ steps }) {
   };
 
   return (
-    <div className="bg-parchment-light rounded-lg p-6 border border-sepia-200">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-serif font-bold text-gray-900 border-b border-sepia-300 pb-2">
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.4 }}
+      className="bg-parchment-light rounded-lg p-6 border border-sepia-200 shadow-md"
+    >
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-serif font-bold text-gray-900 border-b border-sepia-300 pb-2">
           Instructions
         </h2>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={() => setShowFinished(!showFinished)}
           className={`px-4 py-2 rounded-full text-sm font-medium transition duration-300 ${
             showFinished
@@ -132,22 +179,28 @@ function InstructionsList({ steps }) {
           }`}
         >
           {showFinished ? 'Hide Finished' : 'Show Finished'}
-        </button>
+        </motion.button>
       </div>
       <ol className="space-y-4 font-handwritten">
         {steps.map((step, index) => (
-          <StepItem
+          <motion.div
             key={index}
-            step={step}
-            index={index}
-            isOpen={openSteps.includes(index)}
-            isCompleted={completedSteps.includes(index)}
-            onToggle={() => handleStepToggle(index)}
-            showFinished={showFinished}
-          />
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 * index }}
+          >
+            <StepItem
+              step={step}
+              index={index}
+              isOpen={openSteps.includes(index)}
+              isCompleted={completedSteps.includes(index)}
+              onToggle={() => handleStepToggle(index)}
+              showFinished={showFinished}
+            />
+          </motion.div>
         ))}
       </ol>
-    </div>
+    </motion.div>
   );
 }
 
@@ -160,22 +213,25 @@ function StepItem({
   showFinished,
 }) {
   return (
-    <li className="bg-parchment rounded-lg overflow-hidden transition-all duration-300 ease-in-out border border-sepia-200">
+    <motion.li
+      layout
+      className="bg-parchment rounded-lg overflow-hidden transition-all duration-300 ease-in-out border border-sepia-200 shadow-sm"
+    >
       <button
         onClick={onToggle}
-        className="w-full text-left p-4 flex items-center justify-between focus:outline-none"
+        className="w-full text-left p-4 flex items-center justify-between focus:outline-none hover:bg-sepia-100 transition-colors duration-200"
       >
         <span
-          className={`text-lg ${
+          className={`text-xl ${
             isCompleted ? 'line-through text-gray-600' : 'text-gray-900'
           }`}
         >
           Step {index + 1}
         </span>
-        <svg
-          className={`w-6 h-6 transition-transform duration-300 ${
-            isOpen || showFinished ? 'transform rotate-180' : ''
-          }`}
+        <motion.svg
+          animate={{ rotate: isOpen || showFinished ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+          className="w-6 h-6"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -187,43 +243,71 @@ function StepItem({
             strokeWidth={2}
             d="M19 9l-7 7-7-7"
           />
-        </svg>
+        </motion.svg>
       </button>
-      {(showFinished || isOpen) && (
-        <div className="p-4 border-t border-sepia-200">
-          <p className="text-gray-900">{step}</p>
-        </div>
-      )}
-    </li>
+      <AnimatePresence initial={false}>
+        {(showFinished || isOpen) && (
+          <motion.div
+            initial="collapsed"
+            animate="expanded"
+            exit="collapsed"
+            variants={{
+              expanded: { opacity: 1, height: 'auto' },
+              collapsed: { opacity: 0, height: 0 },
+            }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden border-t border-sepia-200"
+          >
+            <div className="p-4">
+              <p className="text-gray-900 text-lg">{step}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.li>
   );
 }
 
 function RecipeFooter({ url, cost }) {
   return (
-    <div className="mt-12 text-center">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.6 }}
+      className="mt-12 text-center"
+    >
       {url && (
         <a
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block px-6 py-3 bg-sepia-200 text-gray-900 rounded-full text-lg font-medium hover:bg-sepia-300 transition duration-300 mb-4"
+          className="inline-flex items-center px-6 py-3 bg-sepia-200 text-gray-900 rounded-full text-lg font-medium hover:bg-sepia-300 transition duration-300 mb-4"
         >
           View Original Recipe
+          <ExternalLink className="ml-2" size={18} />
         </a>
       )}
       {cost > 0 && (
-        <p className="text-xl text-gray-800 font-handwritten">
-          Estimated cost: <span className="font-bold">${cost.toFixed(2)}</span>
+        <p className="text-2xl text-gray-800 font-handwritten mt-4">
+          Estimated cost:{' '}
+          <span className="font-bold flex items-center justify-center">
+            <DollarSign className="mr-1" size={24} />
+            {cost.toFixed(2)}
+          </span>
         </p>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 function LoadingSpinner() {
   return (
     <div className="flex justify-center items-center h-screen bg-amber-50">
-      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-600"></div>
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        className="rounded-full h-32 w-32 border-t-4 border-b-4 border-gray-900"
+      ></motion.div>
     </div>
   );
 }
@@ -231,9 +315,15 @@ function LoadingSpinner() {
 function ErrorMessage({ message }) {
   return (
     <div className="flex justify-center items-center h-screen bg-amber-50">
-      <div className="bg-red-100 text-red-900 px-6 py-4 rounded-lg shadow-lg border border-red-200">
-        <p className="text-lg font-medium">Oops! {message}</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+        className="bg-red-100 text-red-900 px-8 py-6 rounded-lg shadow-lg border-2 border-red-300"
+      >
+        <p className="text-2xl font-medium">Oops! {message}</p>
+        <p className="mt-2 text-lg">Please try again later.</p>
+      </motion.div>
     </div>
   );
 }
