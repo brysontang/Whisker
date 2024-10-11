@@ -89,7 +89,9 @@ export default function Home() {
               <li>Install the Whisker Chrome extension</li>
               <li>Find a recipe you like on any website</li>
               <li>Click the Whisker icon to scrape the recipe</li>
-              <li>Add your custom instructions (e.g., "make it vegan")</li>
+              <li>
+                Add your custom instructions (e.g., &quot;make it vegan&quot;)
+              </li>
               <li>Save your personalized recipe</li>
             </ol>
           </div>
@@ -100,8 +102,8 @@ export default function Home() {
             Customize Your Cooking Experience
           </h2>
           <p className="text-xl text-gray-700 max-w-2xl mx-auto">
-            Whether you're looking to make a recipe vegan, keto-friendly, or
-            simply want to add your own twist, Whisker gives you the power to
+            Whether you&apos;re looking to make a recipe vegan, keto-friendly,
+            or simply want to add your own twist, Whisker gives you the power to
             transform any recipe to fit your lifestyle and preferences.
           </p>
         </section>

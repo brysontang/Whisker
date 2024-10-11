@@ -35,7 +35,7 @@ export default function VerifyRequest() {
               Check Your Email
             </h2>
             <p className="mt-2 text-lg text-gray-700 font-handwritten">
-              We've sent you a secure sign-in link
+              We&apos;ve sent you a secure sign-in link
             </p>
           </motion.div>
 
@@ -46,7 +46,7 @@ export default function VerifyRequest() {
               in to your account.
             </p>
             <p className="text-center text-gray-600 text-sm">
-              If you don't see the email, please check your spam folder.
+              If you don&apos;t see the email, please check your spam folder.
             </p>
 
             <Link href="/auth/login" passHref>
