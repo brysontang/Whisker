@@ -1,0 +1,89 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.x'
+
+      - name: Install dependencies
+        run: |
+          cd apps/nextjs-app
+          npm install
+
+      - name: Get commit hash
+        id: get_commit_hash
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Build project
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          MONGODB_DB: ${{ secrets.MONGODB_DB }}
+          AUTH_POSTMARK_KEY: ${{ secrets.AUTH_POSTMARK_KEY }}
+          EMAIL_SERVER: ${{ secrets.EMAIL_SERVER }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          NEXT_PUBLIC_COMMIT_HASH: ${{ steps.get_commit_hash.outputs.COMMIT_HASH }}
+        run: |
+          cd apps/nextjs-app
+          NEXT_PUBLIC_COMMIT_HASH=$NEXT_PUBLIC_COMMIT_HASH npm run build
+
+      - name: List `.next` Directory Contents
+        run: |
+          cd apps/nextjs-app
+          ls -la .next
+
+      - name: Verify Build Success
+        run: |
+          cd apps/nextjs-app
+          test -d .next || { echo "Build failed"; exit 1; }
+
+      - name: Deploy to DigitalOcean
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DIGITALOCEAN_IP }}
+          username: ${{ secrets.DIGITALOCEAN_USER }}
+          key: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
+          source: 'apps/nextjs-app/.next/*'
+          target: '/var/www/whisker.recipes/'
+
+  restart:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Create SSH key file
+        run: |
+          echo "${{ secrets.DIGITALOCEAN_SSH_KEY }}" > ~/do_key
+          chmod 600 ~/do_key
+
+      - name: Restart application
+        run: |
+          ssh -i ~/do_key -o StrictHostKeyChecking=no ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_IP }} '
+            export OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" &&
+            export MONGODB_URI="${{ secrets.MONGODB_URI }}" &&
+            export MONGODB_DB="${{ secrets.MONGODB_DB }}" &&
+            export AUTH_POSTMARK_KEY="${{ secrets.AUTH_POSTMARK_KEY }}" &&
+            export EMAIL_SERVER="${{ secrets.EMAIL_SERVER }}" &&
+            export EMAIL_FROM="${{ secrets.EMAIL_FROM }}" &&
+            export NEXT_PUBLIC_COMMIT_HASH="${{ steps.get_commit_hash.outputs.COMMIT_HASH }}" &&
+            export NODE_ENV="production" &&
+            cd /var/www/whisker.recipes &&
+            npm install --production &&
+            if pm2 describe whisker.recipes > /dev/null; then
+              pm2 restart whisker.recipes --update-env;
+            else
+              pm2 start "npm start" --name whisker.recipes;
+            fi'
