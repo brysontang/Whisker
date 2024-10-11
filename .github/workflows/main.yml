@@ -51,14 +51,10 @@ jobs:
           test -d .next || { echo "Build failed"; exit 1; }
 
       - name: Deploy to DigitalOcean
-        uses: appleboy/rsync-action@master
-        with:
-          host: ${{ secrets.DIGITALOCEAN_IP }}
-          username: ${{ secrets.DIGITALOCEAN_USER }}
-          key: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
-          args: "-avz --delete --exclude='.git' --exclude='node_modules'"
-          source: 'apps/nextjs-app/'
-          target: '/var/www/whisker.recipes/'
+        run: |
+          echo "${{ secrets.DIGITALOCEAN_SSH_KEY }}" > ~/do_key
+          chmod 600 ~/do_key
+          scp -o StrictHostKeyChecking=no -i ~/do_key -r apps/nextjs-app/.next/* ${{ secrets.DIGITALOCEAN_USER }}@${{ secrets.DIGITALOCEAN_IP }}:/var/www/whisker.recipes/
 
   restart:
     runs-on: ubuntu-latest
