@@ -114,7 +114,7 @@ function AIDisclaimer() {
           rel="noopener noreferrer"
           className="text-blue-600 hover:text-blue-800 underline ml-1"
         >
-          FDA's safe cooking temperature guidelines
+          FDA&apos;s safe cooking temperature guidelines
         </a>
         .
       </p>
