@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -8,6 +8,8 @@ import {
   ExternalLink,
   DollarSign,
   AlertTriangle,
+  Plus,
+  Minus,
 } from 'lucide-react';
 
 const pageVariants = {
@@ -27,6 +29,9 @@ export default function RecipePage({ params }) {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [newTag, setNewTag] = useState({ color: '#FF0000', text: '' });
+  const [isAddTagOpen, setIsAddTagOpen] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -48,6 +53,43 @@ export default function RecipePage({ params }) {
     };
     fetchRecipe();
   }, [recipeId]);
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch(`/api/recipes/${recipeId}/tags`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch tags');
+        }
+        const data = await response.json();
+        setTags(data);
+      } catch (err) {
+        console.error('Error fetching tags:', err);
+      }
+    };
+    fetchTags();
+  }, [recipeId]);
+
+  const addTag = async () => {
+    try {
+      const response = await fetch(`/api/recipes/${recipeId}/tags`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTag),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to add tag');
+      }
+      const addedTag = await response.json();
+      setTags([...tags, addedTag]);
+      setNewTag({ color: '#FF0000', text: '' });
+      setIsAddTagOpen(false);
+    } catch (err) {
+      console.error('Error adding tag:', err);
+    }
+  };
 
   if (loading) return <LoadingSpinner />;
   if (error) return <ErrorMessage message={error} />;
@@ -81,6 +123,14 @@ export default function RecipePage({ params }) {
             author={recipe.author}
             emoji={recipe.emoji}
           />
+          <TagSection
+            tags={tags}
+            isAddTagOpen={isAddTagOpen}
+            setIsAddTagOpen={setIsAddTagOpen}
+            newTag={newTag}
+            setNewTag={setNewTag}
+            addTag={addTag}
+          />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
             <IngredientsList ingredients={recipe.ingredients} />
             <InstructionsList steps={recipe.steps} />
@@ -89,6 +139,108 @@ export default function RecipePage({ params }) {
         </motion.div>
       </div>
     </motion.div>
+  );
+}
+
+function TagSection({
+  tags,
+  isAddTagOpen,
+  setIsAddTagOpen,
+  newTag,
+  setNewTag,
+  addTag,
+}) {
+  const colorOptions = [
+    '#FFB3BA', // Soft pink
+    '#BAFFC9', // Soft green
+    '#BAE1FF', // Soft blue
+    '#FFFFBA', // Soft yellow
+    '#FFDFBA', // Soft orange
+    '#E6BAFF', // Soft purple
+  ];
+
+  const handleOpenAddTag = () => {
+    setIsAddTagOpen(true);
+  };
+
+  const handleCloseAddTag = () => {
+    setIsAddTagOpen(false);
+  };
+
+  return (
+    <div className="mt-6">
+      <h3 className="text-2xl font-serif font-bold mb-4 text-gray-900">Tags</h3>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {tags.map((tag, index) => (
+          <span
+            key={index}
+            className="px-3 py-1 rounded-full text-sm font-medium"
+            style={{ backgroundColor: tag.color, color: 'white' }}
+          >
+            {tag.text}
+          </span>
+        ))}
+        <button
+          onClick={handleOpenAddTag}
+          className="px-3 py-1 rounded-full text-sm font-medium bg-sepia-200 text-gray-900 hover:bg-sepia-300 transition duration-300 flex items-center"
+        >
+          <Plus size={14} className="mr-1" />
+          Add Tag
+        </button>
+      </div>
+      {isAddTagOpen && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-lg shadow-lg p-6 border border-sepia-300 mb-6"
+        >
+          <h4 className="text-xl font-bold mb-4">Add New Tag</h4>
+          <input
+            type="text"
+            placeholder="Tag name"
+            value={newTag.text}
+            onChange={(e) => setNewTag({ ...newTag, text: e.target.value })}
+            className="w-full border border-gray-300 rounded px-3 py-2 mb-4"
+          />
+          <div className="mb-4">
+            <p className="mb-2">Select color:</p>
+            <div className="flex gap-2">
+              {colorOptions.map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setNewTag({ ...newTag, color })}
+                  className={`w-8 h-8 rounded-full ${
+                    newTag.color === color
+                      ? 'ring-2 ring-offset-2 ring-gray-500'
+                      : ''
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={handleCloseAddTag}
+              className="px-4 py-2 rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 transition duration-300"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                addTag();
+                handleCloseAddTag();
+              }}
+              className="px-4 py-2 rounded-full bg-sepia-200 text-gray-900 hover:bg-sepia-300 transition duration-300"
+            >
+              Add Tag
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </div>
   );
 }
 
