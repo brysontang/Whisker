@@ -56,7 +56,14 @@ export const authOptions = {
       }
       return token;
     },
-    async session({ session, token }) {},
+    async session({ session, token }) {
+      // Transfer token data to session
+      if (token) {
+        session.user.id = token.id; // Ensure user ID is present in session
+        session.user.accessToken = token.accessToken; // Include accessToken if needed
+      }
+      return session;
+    },
     async redirect({ url, baseUrl }) {
       try {
         const decodedUrl = decodeURIComponent(url);
